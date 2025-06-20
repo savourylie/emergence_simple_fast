@@ -41,10 +41,13 @@ and place the file `longmemeval_s.json` there.
 export OPENAI_API_KEY=your-api-key
 ```
 
-Then run
+### 5. Run the generation/evaluation script
+
 ```
 python main.py
 ```
+
+Depending on your setup, this should take ~30 minutes.
 
 ## Requirements
 
