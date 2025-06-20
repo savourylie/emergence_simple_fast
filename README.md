@@ -25,14 +25,16 @@ pip install -r requirements.txt
 
 ### 3. Download the dataset
 
-Download the file `longmemeval_s.json` from the [LongMemEval repo](https://github.com/xiaowu0162/LongMemEval) and place it in `./data/`.
+Download the LongMemEval dataset by following the instructions in the [LongMemEval repo](https://github.com/xiaowu0162/LongMemEval?tab=readme-ov-file#data).
 
-Place the longmemeval_s.json file from LongMemEval into the ./data directory:
+Create a directory called `data` 
 
 ```
 mkdir data
-# Download the relevant file into ./data/longmemeval_s.json
 ```
+
+and place the file `longmemeval_s.json` there. 
+
 
 ### 4. Set your OpenAI API key as an environment variable:
 ```
