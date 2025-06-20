@@ -1,4 +1,4 @@
-# Simple RAG for 79% on LongMemEval
+# Simple RAG for LongMemEval
 
 A minimal retrieval-augmented generation (RAG) script using `sentence-transformers` and OpenAI's GPT models. This repo evaluates the ability of LLMs to recall relevant information from long-term memory, using the [LongMemEval](https://github.com/xiaowu0162/LongMemEval) benchmark.
 
