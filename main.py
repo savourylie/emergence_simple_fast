@@ -1,5 +1,6 @@
 from sentence_transformers import SentenceTransformer, util
 import json, textwrap, numpy as np, openai, time, os
+from tqdm import tqdm
 
 # We use a simple local embedding model.  Depending on your GPU setup, your latency may vary.
 retrieval_model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -122,7 +123,7 @@ def main():
     num_success, nobs = 0, 0
     stopwatch = Stopwatch()
     hypotheses, haystack_time, question_time = [], [], []
-    for haystack in haystacks:
+    for haystack in tqdm(haystacks):
         question_id = haystack['question_id']
         question = haystack['question']
         question_date = haystack['question_date']
