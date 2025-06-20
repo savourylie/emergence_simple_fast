@@ -47,7 +47,7 @@ export OPENAI_API_KEY=your-api-key
 python main.py
 ```
 
-Depending on your setup, this should take ~30 minutes.
+This should take well under an hour, for most setups.
 
 ## Requirements
 
