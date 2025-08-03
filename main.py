@@ -189,10 +189,11 @@ def top_p_selection(scores, candidates, p=0.9, min_k=5, max_tokens=20000):
 def greedy_mmr(query_embedding, candidates, candidate_embeddings, scores, lambda_param=0.65, max_tokens=10000):
     """Greedy Maximum Marginal Relevance for de-duplication with token-based capping."""
     if not candidates:
-        return [], [], 0, 0
+        return [], [], 0, 0, []
     
     selected = []
     selected_embeddings = []
+    selected_mmr_scores = []  # Track actual MMR composite scores
     remaining_indices = list(range(len(candidates)))
     total_tokens = 0
     
@@ -200,9 +201,11 @@ def greedy_mmr(query_embedding, candidates, candidate_embeddings, scores, lambda
     best_idx = np.argmax(scores)
     first_candidate = candidates[best_idx]
     first_tokens = count_tokens(first_candidate)
+    first_mmr_score = scores[best_idx]  # First item gets its relevance score as MMR score
     
     selected.append(first_candidate)
     selected_embeddings.append(candidate_embeddings[best_idx])
+    selected_mmr_scores.append(first_mmr_score)
     remaining_indices.remove(best_idx)
     total_tokens += first_tokens
     
@@ -245,13 +248,15 @@ def greedy_mmr(query_embedding, candidates, candidate_embeddings, scores, lambda
         # Select item with highest MMR score
         best_mmr_idx = np.argmax(mmr_scores)
         selected_idx = remaining_indices[best_mmr_idx]
+        actual_mmr_score = mmr_scores[best_mmr_idx]
         
         selected.append(candidates[selected_idx])
         selected_embeddings.append(candidate_embeddings[selected_idx])
+        selected_mmr_scores.append(actual_mmr_score)
         total_tokens += candidate_tokens_list[best_mmr_idx]
         remaining_indices.remove(selected_idx)
     
-    return selected, selected_embeddings, len(selected), total_tokens
+    return selected, selected_embeddings, len(selected), total_tokens, selected_mmr_scores
 
 
 def process_question_mc(memstruct, question: str, choices: list[str], question_date: str, top_k=42, model_name=DEFAULT_MODEL, use_adaptive_k=False, logger=None) -> tuple:
@@ -280,7 +285,7 @@ def process_question_mc(memstruct, question: str, choices: list[str], question_d
             initial_tokens = sum(count_tokens_list(candidates))
             
             # INVERTED PIPELINE: Apply MMR first on full candidate set
-            mmr_candidates, _, mmr_k, mmr_tokens = greedy_mmr(
+            mmr_candidates, _, mmr_k, mmr_tokens, mmr_composite_scores = greedy_mmr(
                 query_embedding, candidates, candidate_embeddings, scores, lambda_param=0.65, max_tokens=15000
             )
             
@@ -291,13 +296,9 @@ def process_question_mc(memstruct, question: str, choices: list[str], question_d
             
             # Then apply Top-P as quality filter on MMR results
             if mmr_candidates:
-                # Get scores for MMR-selected candidates
-                mmr_indices = [candidates.index(cand) for cand in mmr_candidates]
-                mmr_scores = [scores[i] for i in mmr_indices]
-                
-                # Apply Top-P selection with token capping
-                retrieved_turns, top_p_scores, final_k, final_tokens = top_p_selection(
-                    mmr_scores, mmr_candidates, p=0.7, min_k=10, max_tokens=10000
+                # Use actual MMR composite scores for Top-P selection
+                retrieved_turns, _, final_k, final_tokens = top_p_selection(
+                    mmr_composite_scores, mmr_candidates, p=0.7, min_k=10, max_tokens=10000
                 )
             else:
                 retrieved_turns = []
