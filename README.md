@@ -1,4 +1,4 @@
-# Adaptive RAG for Memory Benchmarks (Enhanced)
+# Emergence Simple Fast (Adaptive-K Fork)
 
 An enhanced fork of [Emergence AI's emergence_simple_fast](https://github.com/EmergenceAI/emergence_simple_fast) repository, featuring **adaptive retrieval with MMR + Top-P** to replace traditional fixed Top-K approaches. This implementation provides more adaptive, chunk-size and dataset-independent retrieval for long-term memory evaluation across multiple benchmark datasets.
 
