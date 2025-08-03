@@ -70,26 +70,18 @@ pip install -r requirements.txt
 export OPENAI_API_KEY=your-api-key-here
 ```
 
-### 3. Dataset Preparation
-```bash
-mkdir data
-# Download LongMemEval dataset following instructions from:
-# https://github.com/xiaowu0162/LongMemEval
-# Place longmemeval_s.json in the data/ directory
-```
-
-### 4. Run Benchmarks
+### 3. Run Benchmarks
 
 **Enhanced Adaptive Retrieval (Recommended):**
 ```bash
-# LongMemEval with adaptive MMR + Top-P
-python main.py lme --adaptive-k --num_samples 50
+# LongMemEval with adaptive MMR + Top-P and stratified sampling
+python main.py lme --adaptive-k --num_samples 50 --stratified
 
 # MSC with adaptive retrieval  
 python main.py msc --adaptive-k --num_samples 20
 
-# LoCoMo with standard fixed Top-K
-python main.py locomo --num_samples 15
+# LoCoMo with standard fixed Top-K and stratified sampling
+python main.py locomo --num_samples 15 --stratified
 ```
 
 **Original Method (for comparison):**
